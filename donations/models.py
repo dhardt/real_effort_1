@@ -1,3 +1,4 @@
+
 from otree.api import (
     models, widgets, BaseConstants, BaseSubsession, BaseGroup, BasePlayer,
     Currency as c, currency_range
@@ -40,7 +41,6 @@ class Player(BasePlayer):
 
     def calculate_payoff(self):
         self.payoff = Constants.endowment - self.donation
-
 
     def check_claim(self):
         self.claimed_content_correct = (self.claimed_content == self.treatment)
