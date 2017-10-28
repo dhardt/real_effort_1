@@ -8,7 +8,11 @@ var_names = ['sex', 'age']
 prelim_matrix= np.matrix("1 2; 3 4; 5 6; 6 7; 8 9; 10 11; 12 13; 14 15")
 
 
-def allocate(players, var_names,  var_ordinal = None, var_cardinal = None):
+def allocate(players, var_names,  var_ordinal = None, var_cardinal = None, treatment_labels = None):
+    if not treatment_labels is None:
+        if not len(treatment_labels) ==2:
+            raise Exception("Length of treatment labels has to be equal to number of treatment groups (in this case 2).")
+
     sample_size = len(players)
     num_covariates = len(var_names)
 
@@ -25,7 +29,7 @@ def allocate(players, var_names,  var_ordinal = None, var_cardinal = None):
     if var_cardinal is None:
         var_cardinal = list()
         for name in var_names:
-            if not name in var_ordinal.keys():
+            if (not name in var_ordinal.keys()) and (not name in var_cardinal):
                 if isinstance(axess_data(0,name), str):
                     var_cardinal.append(name)
 
@@ -35,24 +39,34 @@ def allocate(players, var_names,  var_ordinal = None, var_cardinal = None):
             df = pd.DataFrame(temp_col, columns=['temp'])
             df_temp = pd.get_dummies(df['temp'])
             mat_temp = df_temp.as_matrix(columns=None)
-            final_matrix = np.concatenate(final_matrix, mat_temp[:, -0])
+            final_matrix = np.column_stack((final_matrix, mat_temp[:, -0]))
         elif var_names[i] in var_ordinal.keys():
             df_temp = pd.Categorical(list(temp_col.A1), categories=var_ordinal[var_names[i]], ordered=True)
             df_temp = pd.Series(df_temp)
-            df_temp.cat.rename_categories(list(range(len(var_ordinal[var_names[i]]))))
+            df_temp = df_temp.cat.rename_categories(list(range(len(var_ordinal[var_names[i]]))))
             mat_temp = df_temp.as_matrix(columns=None)
-            final_matrix = np.concatenate(final_matrix, mat_temp)
+            final_matrix = np.column_stack((final_matrix, mat_temp))
         else:
-            temp_col.astype(np.float)
+            temp_col = temp_col.astype(np.float)
             mat_temp = temp_col
-            final_matrix = np.concatenate(final_matrix, mat_temp)
+            final_matrix = np.column_stack((final_matrix, mat_temp))
 
-    alloc = stratification(final_matrix)
+    final_matrix = final_matrix[:,1:]
+
+    alloc, strata = stratification(final_matrix)
+
+    if not treatment_labels is None:
+        for i in range(sample_size):
+                alloc[i] = treatment_labels[alloc[i]]
+
+    for i in range(sample_size):
+        players[i].stratum = strata[i]
+
     return(alloc)
 
 
 
-dict()
+
 def random(covariate_matrix, last_subject="random"):
     # This function returns a random treatment allocation that allocates half of the subjects to
     # the treatment group and the other half to the control group
@@ -90,7 +104,7 @@ def stratification(covariate_matrix):
     binary_matrix = covariate_matrix.copy()
     num_covariates = len(covariate_matrix[0].A1)
     sample_size = len(covariate_matrix[:, 0])
-    cardinal = [i for i in range(num_covariates) if len(np.unique(list(covariate_matrix[:, i]))) > 1]
+    cardinal = [i for i in range(num_covariates) if len(np.unique(list(covariate_matrix[:, i]))) > 2] # all variables that are not dummies
 
     for i in cardinal:
         q = np.percentile(covariate_matrix[:, i], 50)
@@ -126,7 +140,13 @@ def stratification(covariate_matrix):
             tr_assigned.append(temp_alloc[j])
             alloc[temp[j]] = temp_alloc[j]
 
-    return alloc
+    strata = [0]*sample_size
+    for i in range(len(blocks)):
+        for j in range(len(blocks[i])):
+            strata[blocks[i][j]] = i
+
+
+    return alloc, strata
 
 
 stratification(covariate_matrix)

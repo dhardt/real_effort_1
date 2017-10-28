@@ -9,12 +9,9 @@ class DonationDecision(Page):
     form_fields = ['donation']
 
 class IntroDonation(Page):
-    def vars_for_template(self):
+    def before_next_page(self):
         from allocation_survey.models import Player as TreatmentPlayer
-        treatment = TreatmentPlayer.objects.get(participant=self.participant).treatment
-        return {'treatment':
-                treatment}
-        #previous_variables = TreatmentPlayer.objects.get(participant=self.participant)
+        self.player.treatment = self.participant.vars['treatment']
 
 class ClassificationDecision(Page):
     form_model = models.Player
@@ -30,16 +27,8 @@ class ResultsWaitPage(WaitPage):
 
 
 class Results(Page):
-    def vars_for_template(self):
-        from allocation_survey.models import Player as TreatmentPlayer
-        treatment = TreatmentPlayer.objects.get(participant=self.participant).treatment
-        return {'treatment':
-                treatment}
-    #def vars_for_template(self):
-     #   from allocation_survey.models import Player as P
-      #  for field in ['treatment', 'sex', 'age']:
-       #     code = field+" = P.objects.get(participant=self.participant)."+field
-       #     exec(code)
+        pass
+
 
 
 

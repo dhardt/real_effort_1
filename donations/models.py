@@ -23,9 +23,10 @@ class Constants(BaseConstants):
     additional_specifications = ['sunset', 'noanswer']
 
 class Subsession(BaseSubsession):
-    def creating_session(self):
-        for p in self.get_players():
-            p.treatment = random.choice(Constants.treatment_specifications)
+#    def creating_session(self):
+#        for p in self.get_players():
+#            p.treatment = random.choice(Constants.treatment_specifications)
+    pass
 
 
 class Group(BaseGroup):
@@ -35,7 +36,7 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     donation = models.CurrencyField(min=0, max=Constants.endowment,
     doc='donation to charity in EUR', verbose_name='How much do you want to donate?')
-    treatment = models.CharField(choices=Constants.treatment_specifications)
+    treatment = models.CharField()
     claimed_content = models.CharField(choices=Constants.treatment_specifications + Constants.additional_specifications)
     claimed_content_correct = models.BooleanField()
 

@@ -14,10 +14,12 @@ class SurveyWaitPage(WaitPage):
 
     def after_all_players_arrive(self):
         p = self.group.get_players()
-        treatment = allocate(p, Constants.var_names, var_ordinal=Constants.var_ordinal)
+        treatment = allocate(p,
+                             Constants.var_names,
+                             var_ordinal=Constants.var_ordinal,
+                             treatment_labels = Constants.treatment_labels)
         for i in range(len(p)):
-            p[i].treatment = treatment[i]
-            p[i].save()
+            p[i].participant.vars['treatment'] = treatment[i]
 
 
 class Results(Page):

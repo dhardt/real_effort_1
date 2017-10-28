@@ -8,7 +8,7 @@
 {% block content %}
     <p> Your endowment is {{Constants.endowment}} </p>
 
-    {% if player.treatment == "richkid" %}
+    {% if player.treatment == 'richkid' %}
         <img src="{% static "donations/richkid.jpg" %}">
     {% else %}
         <img src="{% static "donations/poorkid.jpg" %}">

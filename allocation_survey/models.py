@@ -18,6 +18,7 @@ class Constants(BaseConstants):
     players_per_group = None
     num_rounds = 1
 
+    treatment_labels = ['poorkid', 'richkid']
     sex_selection = ['male', 'female']
     age_selection = []
     education_selection = ['Primary education', 'Secondary Education', 'Bachelor Degree', 'Master Degree',
@@ -30,12 +31,6 @@ class Constants(BaseConstants):
                     previous_donation_selection}
 
 
-
-
-    #var_types={'cardinal':sex_selection,'numerical':age_selection, 'ordinal':education_selection,'cardinal':
-                    # occupation_selection ,'ordinal': income_selection, 'ordinal':previous_donation_selection}
-
-
 class Subsession(BaseSubsession):
     pass
 
@@ -44,7 +39,7 @@ class Group(BaseGroup):
     pass
 
 class Player(BasePlayer):
-    treatment = models.PositiveIntegerField()
+    stratum = models.PositiveIntegerField()
     sex = models.CharField(choices=Constants.sex_selection,
         verbose_name='What is your sex?')
     age = models.PositiveIntegerField(max=100,

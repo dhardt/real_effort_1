@@ -104,14 +104,14 @@ SESSION_CONFIGS = [
    {
         'name': 'donations',
         'display_name': 'Donations',
-        'num_demo_participants': 2,
+        'num_demo_participants': 3,
         'app_sequence': ['donations'],
     },
 
     {
         'name': 'allocation_survey',
         'display_name': 'Allocation_Survey',
-        'num_demo_participants': 2,
+        'num_demo_participants': 3,
         'app_sequence': ['allocation_survey', 'donations'],
     }
 
